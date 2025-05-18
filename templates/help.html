@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help | Metabolic Models Database</title>
+
+  <!-- Fonts and Tailwind CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            primary: '#1E293B',
+            accent: '#0D9488',
+            'accent-hover': '#0F766E',
+            'error-bg': '#FECACA',
+            'error-text': '#991B1B',
+            'error-border': '#F87171',
+            'success-bg': '#D1FAE5',
+            'success-text': '#065F46',
+            'success-border': '#6EE7B7',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+  <!-- Navigation -->
+  {% include 'navbar.html' %}
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto py-12 px-6 max-w-4xl">
+    <h1 class="text-3xl font-bold mb-6 text-primary">Help Guide</h1>
+    <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed">
+      <ol class="list-decimal space-y-3">
+        <li>
+          Navigate to the
+          <a href="{{ url_for('index') }}" class="text-accent underline hover:text-accent-hover">Home/Search</a>
+          page to view recent model uploads or search by growth media.
+        </li>
+        <li>
+          Use the "Upload New Model File" section to add new models (XML or TSV) and optional associated data files
+          (TSV).
+        </li>
+        <li>
+          Fill in metadata (like Growth Media, Annotation Tool) as applicable. Only the main model file is required.
+        </li>
+        <li>
+          Click "Upload Model". You should see a success message, and the page will reload.
+        </li>
+        <li>
+          Search results or the initial view will show a table of models.
+        </li>
+        <li>
+          Click on any file link (e.g., under "Model File" or "Growth File (TSV)") to download the corresponding file.
+        </li>
+        <li>
+          For further assistance or to report issues, contact:
+          <a href="mailto:dukovski@bu.edu" class="text-accent underline hover:text-accent-hover">dukovski@bu.edu</a>
+        </li>
+      </ol>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-primary text-white py-12 mt-20 text-sm">
+    <div class="container mx-auto text-center px-4 space-y-4">
+      <p>
+        Developed by Benjamin Pfeiffer, Nicholas White, Nicolas Petrunich, Aravind Panicker, and Vassanth Mathan under
+        the supervision of Dr. Ilija Dukovski. Internal use only.
+        Contact:
+        <a href="mailto:dukovski@bu.edu" class="text-accent hover:text-accent-hover">dukovski@bu.edu</a>
+      </p>
+      <p>
+        Learn more about our
+        <a href="{{ url_for('linked_databases') }}" class="text-accent hover:text-accent-hover">Linked Databases</a>
+      </p>
+      <p>© {{ current_year }} Segrè Lab, Boston University. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+
+</html>

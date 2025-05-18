@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Integrated Genome-Scale Metabolic Database - Introduction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#1E293B', // Slate 800
+                        accent: '#0D9488',  // Teal 600
+                        'accent-hover': '#0F766E', // Teal 700
+                        'error-bg': '#FECACA', // Red 200
+                        'error-text': '#991B1B', // Red 800
+                        'error-border': '#F87171', // Red 400
+                        'success-bg': '#D1FAE5', // Green 100
+                        'success-text': '#065F46', // Green 800
+                        'success-border': '#6EE7B7', // Green 300
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen">
+    {% include 'navbar.html' %}
+
+    <main class="flex-grow">
+        <section class="py-12 md:py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                    Integrated Genome-Scale Metabolic Database
+                </h1>
+                <p class="text-lg text-gray-600 mb-6">
+                    Developed for BF768: Biological Database Analysis, Spring 2025, at Boston University
+                </p>
+
+                <div class="max-w-3xl mx-auto mb-12">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Abstract</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        This database, built for the Segrè Lab, supports genome-scale metabolic modeling by integrating
+                        gap-filling, flux balance analysis (FBA), and version control. It stores draft models,
+                        annotations, and experimental data (e.g., growth conditions, reaction fluxes) for P. simiae, enabling researchers to identify missing reactions using KEGG and BiGG, visualize
+                        growth via COMETS simulations, and track model iterations. Designed for internal use, it offers
+                        a web interface for uploading models (XML, TSV), searching by media, and downloading data, with
+                        future potential for AI-driven model refinement.
+                    </p>
+                </div>
+
+                <div class="max-w-3xl mx-auto mb-12">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Project Team</h2>
+                    <p class="text-gray-600">
+                        <strong>Developers:</strong> Benjamin Pfeiffer, Nicholas White, Nicolas Petrunich, Aravind
+                        Panicker, Vassanth Mathan<br>
+                        <strong>Supervisor:</strong> Dr. Ilija Dukovski (<a href="mailto:dukovski@bu.edu"
+                            class="text-accent hover:underline">dukovski@bu.edu</a>)<br>
+                        <strong>Department:</strong> Systems Biology and Bioinformatics, Boston University<br>
+                        <strong>Instructor:</strong> G. Benson<br>
+                    </p>
+                </div>
+
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Get Started</h2>
+                    <div class="flex justify-center gap-4">
+                        <a href="{{ url_for('index') }}"
+                            class="bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover transition font-medium">
+                            Search & Upload Models
+                        </a>
+                        <a href="{{ url_for('about') }}"
+                            class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition font-medium">
+                            About
+                        </a>
+                        <a href="{{ url_for('help_page') }}"
+                            class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 transition font-medium">
+                            Help
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-primary text-white py-12 mt-20">
+        <div class="container mx-auto text-center px-4 text-sm">
+            <p class="mb-4">
+                Developed by Benjamin Pfeiffer, Nicholas White, Nicolas Petrunich, Aravind Panicker, and Vassanth Mathan
+                under
+                the supervision of Dr. Ilija Dukovski. Internal use only.
+                Contact: <a href="mailto:dukovski@bu.edu" class="text-teal-300 hover:underline">dukovski@bu.edu</a>
+            </p>
+            <p class="mb-2">
+                Learn more about our <a href="{{ url_for('linked_databases') }}"
+                    class="text-teal-300 hover:underline">Linked Databases</a>
+            </p>
+            <p>© {{ current_year }} Segrè Lab, Boston University. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

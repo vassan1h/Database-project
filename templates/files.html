@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Files | Metabolic Models Database</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+
+    {% include 'navbar.html' %}
+
+    <main class="flex-grow py-12 px-6 max-w-5xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center">Available Uploaded Files</h1>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-300 bg-white shadow">
+                <thead class="bg-gray-800 text-white">
+                    <tr>
+                        <th class="text-left px-4 py-2">File Name</th>
+                        <th class="text-left px-4 py-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if uploaded_files %}
+                        {% for file in uploaded_files %}
+                        <tr class="border-t">
+                            <td class="px-4 py-2">{{ file }}</td>
+                            <td class="px-4 py-2">
+                                <a href="{{ url_for('download', filename=file) }}" class="text-blue-600 hover:underline">Download</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="2" class="px-4 py-2 text-center text-gray-500">No files found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center py-4 text-sm">
+        © {{ current_year }} Segrè Lab, Boston University. All rights reserved.
+    </footer>
+
+</body>
+</html>

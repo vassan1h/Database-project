@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Metabolic Database - Demo Queries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-primary p-4 text-white flex justify-between">
+        <div class="text-xl font-bold">Metabolic Database</div>
+        <div class="flex space-x-6">
+            <a href="/" class="hover:underline">Home</a>
+            <a href="/demo" class="hover:underline">Demo Queries</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-10">
+
+        <h1 class="text-3xl font-bold text-center mb-12 text-slate-900">Database Query Demo</h1>
+
+        <!-- Metabolic Reactions -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6 text-accent">Metabolic Reactions (Ecoli_K12)</h2>
+            {% if metabolic_reactions %}
+            <div class="overflow-x-auto bg-white shadow rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200 text-center">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3">Reaction ID</th>
+                            <th class="px-6 py-3">Name</th>
+                            <th class="px-6 py-3">Metabolites</th>
+                            <th class="px-6 py-3">Flux Value</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for rxn in metabolic_reactions %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">{{ rxn.reaction_id }}</td>
+                            <td class="px-6 py-4">{{ rxn.reaction_name }}</td>
+                            <td class="px-6 py-4">{{ rxn.metabolites }}</td>
+                            <td class="px-6 py-4">{{ rxn.flux_value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-gray-600">No metabolic reactions found.</p>
+            {% endif %}
+        </section>
+
+        <!-- Gap-Filling Reactions -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6 text-accent">Gap-Filling Reactions (Model_123)</h2>
+            {% if gapfill_reactions %}
+            <div class="overflow-x-auto bg-white shadow rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200 text-center">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3">Model ID</th>
+                            <th class="px-6 py-3">Reaction ID</th>
+                            <th class="px-6 py-3">Name</th>
+                            <th class="px-6 py-3">Source DB</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for gap in gapfill_reactions %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">{{ gap.model_id }}</td>
+                            <td class="px-6 py-4">{{ gap.reaction_id }}</td>
+                            <td class="px-6 py-4">{{ gap.reaction_name }}</td>
+                            <td class="px-6 py-4">{{ gap.source_database }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-gray-600">No gap-filled reactions found.</p>
+            {% endif %}
+        </section>
+
+        <!-- Experimental Conditions -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6 text-accent">Experimental Conditions (Exp_20250321)</h2>
+            {% if experiments %}
+            <div class="overflow-x-auto bg-white shadow rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200 text-center">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3">Experiment ID</th>
+                            <th class="px-6 py-3">Media</th>
+                            <th class="px-6 py-3">Temperature (°C)</th>
+                            <th class="px-6 py-3">Outcome</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for exp in experiments %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">{{ exp.experiment_id }}</td>
+                            <td class="px-6 py-4">{{ exp.media_composition }}</td>
+                            <td class="px-6 py-4">{{ exp.temperature }}</td>
+                            <td class="px-6 py-4">{{ exp.growth_outcome }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center text-gray-600">No experimental conditions found.</p>
+            {% endif %}
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white text-center p-6">
+        <p>© {{ current_year }} Segrè Lab, Boston University. All rights reserved.</p>
+    </footer>
+
+</body>
+
+</html>

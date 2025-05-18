@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Functionality | Metabolic Models Database</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            primary: '#1E293B',
+            accent: '#0D9488',
+            'accent-hover': '#0F766E',
+            'error-bg': '#FECACA',
+            'error-text': '#991B1B',
+            'error-border': '#F87171',
+            'success-bg': '#D1FAE5',
+            'success-text': '#065F46',
+            'success-border': '#6EE7B7',
+          }
+        }
+      }
+    }
+  </script>
+  <style> body { font-family: 'Inter', sans-serif; } </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen">
+{% include 'navbar.html' %}
+<main class="flex-grow">
+  <section class="py-12 md:py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl font-extrabold mb-8 text-center text-accent">Metabolite Charge Visualization</h1>
+
+      <form id="dataUploadForm" class="space-y-6 text-center">
+        <input type="file" name="dataFile" id="dataFile" accept=".xml,.csv,.tsv" required class="block w-full border p-3 rounded-md max-w-md mx-auto">
+        <button type="submit" class="bg-accent text-white px-6 py-3 mt-4 rounded hover:bg-accent-hover">Upload and Visualize</button>
+      </form>
+
+      <div id="error-message" class="text-red-600 text-center mt-6 hidden"></div>
+
+      <div id="chart-area" class="mt-10 hidden space-y-12">
+        <div>
+          <h2 class="text-2xl font-semibold text-center">Full Metabolite Charge Distribution</h2>
+          <canvas id="barChartAll" height="400" style="max-width:100%;"></canvas>
+          <div class="text-center mt-4">
+            <button id="downloadFullJPG" class="bg-accent text-white px-4 py-2 rounded hover:bg-accent-hover mr-2">Download as JPEG</button>
+            <button id="downloadFullPDF" class="bg-accent text-white px-4 py-2 rounded hover:bg-accent-hover">Download as PDF</button>
+          </div>
+          <p class="mt-6 text-lg text-center text-gray-700 max-w-3xl mx-auto">
+            This bar chart shows the charge distribution across all metabolites found in the uploaded file. It allows you to visualize both positively and negatively charged metabolites in a single graph, helping understand the dataset’s electrochemical balance.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-2xl font-semibold text-center">Top 30 Metabolites by Absolute Charge</h2>
+          <canvas id="barChartTop30" height="400" style="max-width:100%;"></canvas>
+          <div class="text-center mt-4">
+            <button id="downloadTopJPG" class="bg-accent text-white px-4 py-2 rounded hover:bg-accent-hover mr-2">Download as JPEG</button>
+            <button id="downloadTopPDF" class="bg-accent text-white px-4 py-2 rounded hover:bg-accent-hover">Download as PDF</button>
+          </div>
+          <p class="mt-6 text-lg text-center text-gray-700 max-w-3xl mx-auto">
+            This graph presents the 30 most extreme metabolites by charge magnitude. Each bar is labeled with the exact metabolite name. It provides insights into dominant ionic contributors in your dataset, potentially linked to metabolic reactivity or toxicity.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-10">
+        <h2 class="text-2xl font-semibold mb-4">How it Works:</h2>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>Upload a <strong>.xml</strong>, <strong>.csv</strong>, or <strong>.tsv</strong> file containing metabolite data.</li>
+          <li>The file must contain at least two columns: <code>name</code> and <code>charge</code>.</li>
+          <li>Two high-resolution bar graphs are generated: a full metabolite charge distribution and a focused view on the top 30 by absolute charge.</li>
+          <li>Each graph can be downloaded as a JPEG or PDF for further analysis or presentation.</li>
+          <li>The graphs are interactive, allowing you to hover over bars for more details such as the exact values and names of each metabolite.</li>
+          <li>Data is processed in the browser, ensuring privacy and security.</li>
+          <li>Charts are generated using Chart.js, a powerful JavaScript library for data visualization.</li>
+          <li>PDF generation is handled by jsPDF, allowing for high-quality exports.</li>
+          <li>Responsive design ensures compatibility across devices, from desktops to tablets.</li>
+          <li>All code is open-source and can be modified to suit specific needs.</li>
+          <li>For any issues or feature requests, please contact the development team.</li>
+          <li>We recommend using the latest version of Chrome or Firefox for optimal performance.</li>
+          <li>For large datasets, ensure your browser has sufficient memory allocated.</li>
+          <li>Charts are designed to be clear and informative, with color coding for positive and negative charges.</li>    
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-primary text-white py-12 mt-20">
+  <div class="container mx-auto text-center px-4 text-sm">
+    <p class="mb-4">
+    Developed by Benjamin Pfeiffer, Nicholas White, Nicolas Petrunich, Aravind Panicker, and Vassanth Mathan under the supervision of Dr. Ilija Dukovski. Internal use only. Contact:
+    <a href="mailto:dukovski@bu.edu" class="text-accent hover:text-accent-hover">dukovski@bu.edu</a>
+  </p>
+  <p class="mb-2">
+    Learn more about our <a href="{{ url_for('linked_databases') }}" class="text-accent hover:text-accent-hover">Linked Databases</a>
+  </p>
+  <p>© 2025 Segrè Lab, Boston University. All rights reserved.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  function downloadChartAsImage(chart, filename, type = 'jpeg') {
+    const link = document.createElement('a');
+    link.href = chart.toBase64Image(type);
+    link.download = filename;
+    link.click();
+  }
+
+  function downloadChartAsPDF(chart, title) {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    const imageData = chart.toBase64Image('jpeg', 1);
+    pdf.text(title, 10, 10);
+    pdf.addImage(imageData, 'JPEG', 10, 20, 180, 100);
+    pdf.save(title.replace(/\s+/g, '_').toLowerCase() + '.pdf');
+  }
+
+  document.getElementById("dataUploadForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const file = document.getElementById("dataFile").files[0];
+    if (!file) return alert("Please select a valid file.");
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    const reader = new FileReader();
+    const errorBox = document.getElementById("error-message");
+
+    reader.onload = function(e) {
+      let data = [];
+
+      try {
+        if (ext === "xml") {
+          const xml = new DOMParser().parseFromString(e.target.result, "application/xml");
+          const records = xml.querySelectorAll("metabolite,DATA_RECORD");
+          records.forEach(r => {
+            const name = r.querySelector("name")?.textContent?.trim();
+            const charge = parseFloat(r.querySelector("charge")?.textContent);
+            if (name && !isNaN(charge)) data.push({ name, charge });
+          });
+        } else {
+          const lines = e.target.result.split('\n');
+          const headers = lines[0].split(/[\,\t]/).map(h => h.toLowerCase());
+          const nameIdx = headers.indexOf("name");
+          const chargeIdx = headers.indexOf("charge");
+          if (nameIdx === -1 || chargeIdx === -1) throw "Missing columns";
+          lines.slice(1).forEach(line => {
+            const cols = line.split(/[\,\t]/);
+            const name = cols[nameIdx]?.trim();
+            const charge = parseFloat(cols[chargeIdx]);
+            if (name && !isNaN(charge)) data.push({ name, charge });
+          });
+        }
+      } catch (err) {
+        errorBox.textContent = "❌ Could not parse file. Ensure it includes 'name' and 'charge' columns.";
+        errorBox.classList.remove("hidden");
+        return;
+      }
+
+      if (!data.length) {
+        errorBox.textContent = "❌ No valid records found.";
+        errorBox.classList.remove("hidden");
+        return;
+      }
+
+      errorBox.classList.add("hidden");
+      document.getElementById("chart-area").classList.remove("hidden");
+
+      const names = data.map(d => d.name);
+      const charges = data.map(d => d.charge);
+      const colors = charges.map(c => c >= 0 ? "#60a5fa" : "#f87171");
+
+      const ctx1 = document.getElementById("barChartAll").getContext("2d");
+      if (window.fullChart) window.fullChart.destroy();
+      window.fullChart = new Chart(ctx1, {
+        type: 'bar',
+        data: { labels: names, datasets: [{ label: 'Charge', data: charges, backgroundColor: colors }] },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: true, text: 'Full Metabolite Charge Distribution', font: { size: 20 } },
+            legend: { display: false }
+          },
+          scales: { x: { ticks: { maxRotation: 60, minRotation: 45 } } }
+        }
+      });
+
+      const top30 = [...data].sort((a, b) => Math.abs(b.charge) - Math.abs(a.charge)).slice(0, 30);
+      const ctx2 = document.getElementById("barChartTop30").getContext("2d");
+      if (window.topChart) window.topChart.destroy();
+      window.topChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: top30.map(d => d.name),
+          datasets: [{ label: 'Top 30', data: top30.map(d => d.charge), backgroundColor: top30.map(d => d.charge >= 0 ? '#38bdf8' : '#fb7185') }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { display: true, text: 'Top 30 Absolute Charge Metabolites', font: { size: 20 } },
+            legend: { display: false }
+          },
+          scales: { x: { ticks: { maxRotation: 60, minRotation: 45 } } }
+        }
+      });
+
+      document.getElementById("downloadFullJPG").onclick = () => downloadChartAsImage(window.fullChart, "full_charge_chart.jpeg");
+      document.getElementById("downloadFullPDF").onclick = () => downloadChartAsPDF(window.fullChart, "Full Metabolite Charge Distribution");
+
+      document.getElementById("downloadTopJPG").onclick = () => downloadChartAsImage(window.topChart, "top30_charge_chart.jpeg");
+      document.getElementById("downloadTopPDF").onclick = () => downloadChartAsPDF(window.topChart, "Top 30 Absolute Charge Metabolites");
+    };
+
+    reader.readAsText(file);
+  });
+</script>
+</body>
+</html>

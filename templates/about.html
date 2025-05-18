@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Metabolic Models Database</title>
+
+  <!-- Fonts and Tailwind CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            primary: '#1E293B',         // Slate 800
+            accent: '#0D9488',          // Teal 600
+            'accent-hover': '#0F766E',  // Teal 700
+            'error-bg': '#FECACA',
+            'error-text': '#991B1B',
+            'error-border': '#F87171',
+            'success-bg': '#D1FAE5',
+            'success-text': '#065F46',
+            'success-border': '#6EE7B7',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+  <!-- Navigation -->
+  {% include 'navbar.html' %}
+
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto py-12 px-6 max-w-4xl">
+    <h1 class="text-3xl font-bold mb-6 text-primary">About Our Database</h1>
+    <div class="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-4">
+      <p>Welcome to the Integrated Genome-Scale Metabolic Database!</p>
+      <p>
+        This platform enables researchers and students within the Segrè Lab to upload, search, view, and download
+        curated genome-scale metabolic models and associated experimental data (like growth condition TSVs).
+      </p>
+      <p>
+        It features a unified web interface for accessing models based on search criteria or browsing recent uploads.
+        The goal is to facilitate scientific exploration into microbial metabolism by providing a central, accessible
+        repository for models and data generated using various tools and techniques (RASTtk, Model SEED, etc.).
+      </p>
+      <p>
+        This project was developed as part of the BF768 course under the supervision of Dr. Ilija Dukovski at Boston
+        University.
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-primary text-white text-center py-12 mt-20 text-sm">
+    <div class="space-y-4 px-4">
+      <p>
+        Developed by Benjamin Pfeiffer, Nicholas White, Nicolas Petrunich, Aravind Panicker, and Vassanth Mathan under
+        the supervision of Dr. Ilija Dukovski. Internal use only.
+        Contact:
+        <a href="mailto:dukovski@bu.edu" class="text-accent hover:text-accent-hover">dukovski@bu.edu</a>
+      </p>
+      <p>
+        Learn more about our
+        <a href="{{ url_for('linked_databases') }}" class="text-accent hover:text-accent-hover">Linked Databases</a>
+      </p>
+      <p>© 2025 Segrè Lab, Boston University. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+
+</html>

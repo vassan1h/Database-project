@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Integrated Genome-Scale Metabolic Database</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            primary: '#1E293B', // Slate 800
+            accent: '#0D9488',  // Teal 600
+            'accent-hover': '#0F766E', // Teal 700
+            'error-bg': '#FECACA', // Red 200
+            'error-text': '#991B1B', // Red 800
+            'error-border': '#F87171', // Red 400
+            'success-bg': '#D1FAE5', // Green 100
+            'success-text': '#065F46', // Green 800
+            'success-border': '#6EE7B7', // Green 300
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .table-container {
+      max-width: 100%;
+      overflow-x: scroll;
+      -webkit-overflow-scrolling: touch;
+      min-height: 100px;
+      padding-bottom: 15px;
+    }
+
+    table {
+      width: 100%;
+      min-width: max-content;
+    }
+
+    .status-message {
+      padding: 1rem;
+      border-radius: 0.375rem;
+      border-width: 1px;
+      margin-bottom: 1rem;
+    }
+
+    .status-success {
+      background-color: theme('colors.success-bg');
+      border-color: theme('colors.success-border');
+      color: theme('colors.success-text');
+    }
+
+    .status-error {
+      background-color: theme('colors.error-bg');
+      border-color: theme('colors.error-border');
+      color: theme('colors.error-text');
+    }
+
+    .status-loading {
+      background-color: #E0E7FF;
+      border-color: #A5B4FC;
+      color: #3730A3;
+    }
+
+    input[type="file"] {
+      font-size: 0.875rem;
+    }
+
+    input[type="file"]::file-selector-button {
+      margin-right: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      border-width: 0px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    input[type="file"]#modelUpload::file-selector-button {
+      background-color: theme('colors.accent');
+      color: theme('colors.white');
+    }
+
+    input[type="file"]#modelUpload:hover::file-selector-button {
+      background-color: theme('colors.accent-hover');
+    }
+
+    input[type="file"]:not(#modelUpload)::file-selector-button {
+      background-color: theme('colors.gray.100');
+      color: theme('colors.gray.700');
+    }
+
+    input[type="file"]:not(#modelUpload):hover::file-selector-button {
+      background-color: theme('colors.gray.200');
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen">
+  {% include 'navbar.html' %}
+
+  <main class="flex-grow">
+    <section class="py-12 md:py-16">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center mb-12">
+          <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-4">Explore Metabolic Models</h1>
+          <p class="text-lg text-gray-600">
+            A unified platform for gap-filling, flux balance analysis (FBA), and version control of genome-scale
+            metabolic models, developed by the Daniels Segrè Lab for internal research. Search models by carbon source
+            or upload files to explore metabolic reactions and annotations. Supported formats: XML, TSV.
+          </p>
+        </div>
+
+        <form action="{{ url_for('search') }}" method="post" class="max-w-xl mx-auto mb-12" id="searchForm">
+          <label for="media_search" class="block text-sm font-medium text-gray-700 mb-1">Search models by media (search with no input displays all results)</label>
+          <div class="flex items-center">
+            <input type="text" name="media_search" id="media_search" value="{{ media_search or '' }}"
+              placeholder="e.g., xylitol, acetate, AKGDSH"
+              class="flex-grow p-3 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent">
+            <button type="submit"
+              class="bg-accent text-white py-3 px-5 rounded-r-md hover:bg-accent-hover transition font-medium border border-accent">
+              Search
+            </button>
+          </div>
+          <div class="mt-4 max-w-xl mx-auto">
+            <span class="block text-sm font-medium text-gray-700 mb-1">Filter by growth result</span>
+            <div class="flex items-center space-x-6">
+              <label class="inline-flex items-center">
+                <input type="radio" name="growth_filter" value="all"
+                       class="form-radio h-4 w-4 text-accent focus:ring-accent-hover"
+                       {% if growth_filter == 'all' or growth_filter is not defined %}checked{% endif %}>
+                <span class="ml-2 text-gray-700">All</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="radio" name="growth_filter" value="growth"
+                       class="form-radio h-4 w-4 text-accent focus:ring-accent-hover"
+                       {% if growth_filter == 'growth' %}checked{% endif %}>
+                <span class="ml-2 text-gray-700">Growth</span>
+              </label>
+              <label class="inline-flex items-center">
+                <input type="radio" name="growth_filter" value="no_growth"
+                       class="form-radio h-4 w-4 text-accent focus:ring-accent-hover"
+                       {% if growth_filter == 'no_growth' %}checked{% endif %}>
+                <span class="ml-2 text-gray-700">No Growth</span>
+              </label>
+            </div>
+          </div>
+        </form>
+
+        {% if error_message %}
+        <div class="max-w-4xl mx-auto mb-8 status-message status-error" role="alert">
+          <p class="font-bold">Error Displaying Models</p>
+          <p>{{ error_message }}</p>
+        </div>
+        {% endif %}
+
+        <h2 class="text-2xl md:text-3xl font-bold text-center mt-12 mb-8 text-slate-900" id="searchHeading">
+          {% if media_search is not none %}
+          Results for “{{ media_search }}”
+          {% else %}
+          Available Models (Latest 5)
+          {% endif %}
+        </h2>
+
+        <div class="mx-auto mb-20" id="searchResults">
+          <div class="table-container shadow border-b border-gray-200 sm:rounded-lg">
+            {% if search_results %}
+            <table class="min-w-full divide-y divide-gray-200 text-center">
+              <thead class="bg-gray-100">
+                <tr>
+                  {% if search_results[0] %}
+                  {% for col in search_results[0].keys() %}
+                  {% if col != 'file_name' and col != 'Biomass_RCH1' %}
+                  <th
+                    class="px-6 py-4 text-sm font-semibold text-gray-600 uppercase tracking-wide text-center whitespace-nowrap">
+                    {% if col.lower() == 'id' %} Genome Model ID
+                    {% elif col.lower() == 'growth_data' %} Growth Result
+                    {% elif col.lower() == 'file_link' %} Model File
+                    {% elif col.lower() == 'growth_file' %} Growth File (TSV)
+                    {% elif col.lower() == 'biomass_file_5mm' %} Biomass 5mM (TSV)
+                    {% elif col.lower() == 'biomass_file_20mm' %} Biomass 20mM (TSV)
+                    {% else %} {{ col.replace('_', ' ').title() }}
+                    {% endif %}
+                  </th>
+                  {% endif %}
+                  {% endfor %}
+                  {% else %}
+                  <th class="px-6 py-4 text-sm font-semibold text-gray-600 uppercase tracking-wide text-center">
+                    Data
+                  </th>
+                  {% endif %}
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200 text-base text-slate-800">
+                {% for row in search_results %}
+                <tr>
+                  {% set file_keys = ['file_link', 'growth_file', 'biomass_file_5mM', 'biomass_file_20mM'] %}
+                  {% for key, val in row.items() %}
+                  {% if key != 'file_name' and key != 'Biomass_RCH1' %}
+                  <td class="px-6 py-4 whitespace-nowrap text-center">
+                    {% if key in file_keys and val %}
+                    <a href="{{ url_for('download', filepath=val) }}" target="_blank" rel="noopener noreferrer"
+                      class="text-accent underline hover:text-accent-hover break-all">
+                      {% if key == 'file_link' %}
+                      {{ row.get('file_name', val.split('/')[-1] if '/' in val else val ) }}
+                      {% else %}
+                      {{ val.split('/')[-1] if '/' in val else val }}
+                      {% endif %}
+                    </a>
+                    {% elif key not in file_keys %}
+                    {{ 'N/A' if val is none else val }}
+                    {% elif key in file_keys and not val %}
+                    N/A
+                    {% endif %}
+                  </td>
+                  {% endif %}
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% elif media_search is not none %}
+            <p class="text-center text-gray-600 p-8">No models found matching “{{ media_search }}”.</p>
+            {% else %}
+            <p class="text-center text-gray-600 p-8">No models available yet. Use the form below to upload one.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <h2 class="text-2xl md:text-3xl font-bold text-center mt-16 mb-8 text-slate-900">Upload New Model File</h2>
+        <div id="uploadStatus" class="max-w-xl mx-auto mb-4 text-center" role="alert"></div>
+
+        <form id="gapfillForm" enctype="multipart/form-data"
+          class="max-w-xl mx-auto mb-12 bg-white p-6 md:p-8 rounded-lg shadow-md space-y-6 border border-gray-200">
+          <div>
+            <label for="modelUpload" class="block text-sm font-medium text-gray-700 mb-1">Choose Main Model File *
+              <span class="text-xs text-gray-500">(Allowed: .xml, Max: 16MB)</span></label>
+            <input type="file" id="modelUpload" name="modelUpload" accept=".xml,.json,.mat" required
+              class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent">
+          </div>
+
+          <fieldset class="border-t border-gray-200 pt-6">
+            <legend class="text-base font-medium text-gray-900 mb-2">Optional Associated TSV Files</legend>
+            <div class="space-y-4">
+              <div>
+                <label for="growth_file_upload" class="block text-sm font-medium text-gray-700 mb-1">Growth File (TSV)
+                  <span class="text-xs text-gray-500">(Optional)</span></label>
+                <input type="file" id="growth_file_upload" name="growth_file_upload" accept=".tsv"
+                  class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent">
+              </div>
+              <div>
+                <label for="biomass_5mM_upload" class="block text-sm font-medium text-gray-700 mb-1">Biomass 5mM File
+                  (TSV)
+                  <span class="text-xs text-gray-500">(Optional)</span></label>
+                <input type="file" id="biomass_5mM_upload" name="biomass_5mM_upload" accept=".tsv"
+                  class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent">
+              </div>
+              <div>
+                <label for="biomass_20mM_upload" class="block text-sm font-medium text-gray-700 mb-1">Biomass 20mM File
+                  (TSV)
+                  <span class="text-xs text-gray-500">(Optional)</span></label>
+                <input type="file" id="biomass_20mM_upload" name="biomass_20mM_upload" accept=".tsv"
+                  class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="border-t border-gray-200 pt-6">
+            <legend class="text-base font-medium text-gray-900 mb-2">Metadata (Optional)</legend>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div>
+                <label for="growth_media" class="block text-sm font-medium text-gray-700">Growth Media</label>
+                <input type="text" id="growth_media" name="growth_media" placeholder="e.g., Glucose Minimal Media"
+                  class="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+              </div>
+              <div>
+                <label for="gapfill_algorithm" class="block text-sm font-medium text-gray-700">Gap-fill
+                  Algorithm</label>
+                <input type="text" id="gapfill_algorithm" name="gapfill_algorithm" value="Model SEED"
+                  class="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+              </div>
+              <div>
+                <label for="annotation_tool" class="block text-sm font-medium text-gray-700">Annotation Tool</label>
+                <input type="text" id="annotation_tool" name="annotation_tool" value="RASTtk"
+                  class="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+              </div>
+              <div>
+                <label for="growth_data" class="block text-sm font-medium text-gray-700">Growth Data</label>
+                <input type="text" id="growth_data" name="growth_data" placeholder="e.g., Growth, No Growth"
+                  class="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-accent focus:border-accent">
+              </div>
+            </div>
+          </fieldset>
+
+          <button type="submit" id="submitButton"
+            class="w-full bg-accent text-white py-3 px-4 rounded-md hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            Upload Model
+          </button>
+        </form>
+
+        <script>
+          const form = document.getElementById("gapfillForm");
+          const submitButton = document.getElementById("submitButton");
+          const statusDiv = document.getElementById("uploadStatus");
+          const fileInput = document.getElementById("modelUpload");
+
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            statusDiv.innerHTML = `<div class="status-message status-loading">Uploading... Please wait.</div>`;
+            submitButton.disabled = true;
+            submitButton.textContent = "Uploading…";
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+              statusDiv.innerHTML = `<div class="status-message status-error"><strong>Upload Failed:</strong> No main model file selected.</div>`;
+              submitButton.disabled = false;
+              submitButton.textContent = "Upload Model";
+              return;
+            }
+
+            const maxFileSize = 16 * 1024 * 1024;
+            if (fileInput.files[0].size > maxFileSize) {
+              statusDiv.innerHTML = `<div class="status-message status-error"><strong>Upload Failed:</strong> Main file size exceeds the ${maxFileSize / 1024 / 1024}MB limit.</div>`;
+              submitButton.disabled = false;
+              submitButton.textContent = "Upload Model";
+              return;
+            }
+
+            const formData = new FormData(form);
+            const apiUrl = "{{ url_for('api_create_model') }}";
+
+            try {
+              const response = await fetch(apiUrl, {
+                method: "POST",
+                body: formData,
+              });
+
+              let jsonResponse;
+              const responseContentType = response.headers.get("content-type");
+              if (responseContentType && responseContentType.includes("application/json")) {
+                jsonResponse = await response.json();
+              } else {
+                const textResponse = await response.text();
+                console.error("Received non-JSON response:", textResponse);
+                jsonResponse = { error: `Server returned non-JSON response (Status: ${response.status}). Check console/network tab for details.` };
+                if (!response.ok) {
+                  throw new Error(jsonResponse.error);
+                }
+              }
+
+              if (!response.ok) {
+                const errorMsg = jsonResponse.error || `Request failed with status ${response.status}: ${response.statusText}`;
+                throw new Error(errorMsg);
+              }
+
+              statusDiv.innerHTML = `
+                                <div class="status-message status-success">
+                                    <strong>Upload Successful!</strong><br>
+                                    Model ID: ${jsonResponse.id || 'N/A'}, File: ${jsonResponse.file_name || 'N/A'}<br>
+                                    Page will reload shortly.
+                                </div>`;
+              form.reset();
+              setTimeout(() => { window.location.reload(); }, 2500);
+            } catch (error) {
+              console.error("Upload fetch/processing failed:", error);
+              statusDiv.innerHTML = `<div class="status-message status-error"><strong>Upload Failed:</strong> ${error.message}</div>`;
+              submitButton.disabled = false;
+              submitButton.textContent = "Upload Model";
+            }
+          });
+        </script>
+
+        <h2 class="text-3xl font-semibold text-center mt-20 mb-12 text-slate-900">Key Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20">
+          <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+            <h3 class="text-xl font-semibold mb-2 text-accent">Gap-Filling</h3>
+            <p>Integrate missing reactions and metabolites using KBase, KEGG, BiGG, and other curated biochemical
+              databases.</p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+            <h3 class="text-xl font-semibold mb-2 text-accent">Flux Balance Analysis</h3>
+            <p>Visualize growth and reaction flux using COMETS simulations and flux balance analysis (FBA) techniques.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+            <h3 class="text-xl font-semibold mb-2 text-accent">Version Control</h3>
+            <p>Track model iterations and support reproducible research with built-in version tracking and
+              documentation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-primary text-white py-12 mt-20">
+    <div class="container mx-auto text-center px-4 text-sm">
+      <p class="mb-4">
+        Developed by Benjamin Pfeiffer, Nicholas White, Nicolas Petrunich, Aravind Panicker, and Vassanth Mathan under
+        the supervision of Dr. Ilija Dukovski. Internal use only.
+        Contact: <a href="mailto:dukovski@bu.edu" class="text-teal-300 hover:underline">dukovski@bu.edu</a>
+      </p>
+      <p class="mb-2">
+        Learn more about our <a href="{{ url_for('linked_databases') }}" class="text-teal-300 hover:underline">Linked
+          Databases</a>
+      </p>
+      <p>© {{ current_year }} Segrè Lab, Boston University. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    document.getElementById("searchForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const searchInput = document.getElementById("media_search").value;
+      const growthFilter = formData.get("growth_filter");
+
+      fetch(form.action, {
+        method: "POST",
+        body: formData,
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Server responded with status ${response.status}`);
+        }
+        return response.text(); // Expecting HTML fragment
+      })
+      .then((html) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        const newResults = doc.querySelector("#searchResults");
+        const currentResults = document.querySelector("#searchResults");
+        if (newResults && currentResults) {
+          currentResults.innerHTML = newResults.innerHTML;
+        }
+
+        // Update heading
+        const newHeading = doc.querySelector("#searchHeading");
+        const currentHeading = document.querySelector("#searchHeading");
+        if (newHeading && currentHeading) {
+          currentHeading.innerHTML = newHeading.innerHTML;
+        }
+      })
+      .catch((err) => {
+        console.error("Search AJAX error:", err);
+        alert("Search failed. Check your connection or try again.");
+      });
+    });
+  </script>
+</body>
+
+</html>

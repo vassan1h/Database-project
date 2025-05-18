@@ -1,0 +1,14 @@
+<nav class="bg-primary text-white py-4 shadow-md sticky top-0 z-10">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+    <a href="{{ url_for('intro') }}" class="text-xl font-bold">Metabolic Database</a>
+    <div class="space-x-4">
+      <a href="{{ url_for('intro') }}" class="hover:text-accent-hover transition">Home</a>
+      <a href="{{ url_for('index') }}" class="hover:text-accent-hover transition">Search & Upload</a>
+      <a href="{{ url_for('functionality') }}" class="hover:text-accent-hover transition">Visualization</a>
+      <a href="{{ url_for('about') }}" class="hover:text-accent-hover transition">About</a>
+      <a href="{{ url_for('help_page') }}" class="hover:text-accent-hover transition">Help</a>
+      <a href="{{ url_for('linked_databases') }}" class="hover:text-accent-hover transition">Linked Databases</a>
+      <!-- <a href="{{ url_for('demo_queries') }}" class="hover:underline">Demo Queries</a> -->
+    </div>
+  </div>
+</nav>

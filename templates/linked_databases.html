@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Linked Databases - Integrated Genome-Scale Metabolic Database</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#1E293B', // Slate 800
+                        accent: '#0D9488',  // Teal 600
+                        'accent-hover': '#0F766E', // Teal 700
+                        'error-bg': '#FECACA', // Red 200
+                        'error-text': '#991B1B', // Red 800
+                        'error-border': '#F87171', // Red 400
+                        'success-bg': '#D1FAE5', // Green 100
+                        'success-text': '#065F46', // Green 800
+                        'success-border': '#6EE7B7', // Green 300
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen">
+    {% include 'navbar.html' %}
+
+    <main class="flex-grow">
+        <section class="py-12 md:py-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-8 text-center">
+                    Linked Databases
+                </h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto text-center mb-12">
+                    Our database integrates data from leading biochemical databases to support gap-filling, metabolic
+                    modeling, and annotation for genome-scale metabolic models. Below, we describe the roles of KEGG,
+                    BiGG, and MetaCyc in our project.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+                        <h2 class="text-xl font-semibold mb-2 text-accent">KEGG</h2>
+                        <p class="text-gray-600 mb-4">
+                            The Kyoto Encyclopedia of Genes and Genomes (KEGG) provides comprehensive data on metabolic
+                            pathways, reactions, and metabolites. In our project, KEGG identifiers are used during
+                            gap-filling to add missing reactions and metabolites to draft models, ensuring biochemical
+                            accuracy.
+                        </p>
+                        <a href="https://www.kegg.jp/" target="_blank" rel="noopener noreferrer"
+                            class="text-accent underline hover:text-accent-hover">Visit KEGG</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+                        <h2 class="text-xl font-semibold mb-2 text-accent">BiGG</h2>
+                        <p class="text-gray-600 mb-4">
+                            The Biochemical, Genetic, and Genomic (BiGG) database offers curated metabolic models and
+                            reaction data. We use BiGG as a source for model templates and to cross-reference reactions
+                            during gap-filling, enhancing model completeness.
+                        </p>
+                        <a href="http://bigg.ucsd.edu/" target="_blank" rel="noopener noreferrer"
+                            class="text-accent underline hover:text-accent-hover">Visit BiGG</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow hover:shadow-md transition">
+                        <h2 class="text-xl font-semibold mb-2 text-accent">MetaCyc</h2>
+                        <p class="text-gray-600 mb-4">
+                            MetaCyc is a database of metabolic pathways and enzymes, used alongside ModelSEED for
+                            annotation cross-referencing. It supports our database by providing detailed enzyme and
+                            pathway data to validate and refine model annotations.
+                        </p>
+                        <a href="https://www.metacyc.org/" target="_blank" rel="noopener noreferrer"
+                            class="text-accent underline hover:text-accent-hover">Visit MetaCyc</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-primary text-white py-12 mt-20">
+        <div class="container mx-auto text-center px-4 text-sm">
+            <p class="mb-4">
+                Developed by Benjamin Pfeiffer, Nicholas White, Nicolas Petrunich, Aravind Panicker, and Vassanth Mathan
+                under
+                the supervision of Dr. Ilija Dukovski. Internal use only.
+                Contact: <a href="mailto:dukovski@bu.edu" class="text-teal-300 hover:underline">dukovski@bu.edu</a>
+            </p>
+            <p class="mb-2">
+                Learn more about our <a href="{{ url_for('linked_databases') }}"
+                    class="text-teal-300 hover:underline">Linked Databases</a>
+            </p>
+            <p>© {{ current_year }} Segrè Lab, Boston University. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
