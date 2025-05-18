@@ -64,6 +64,6 @@ All templates are written in **Jinja2** and styled with **Tailwind CSS** and **I
 
 ---
 
-***Contributors***
+***Contributors:***
 Aravind Panicker, Benjamin Pfeiffer, Nicolas Petrunich, Vassanth Mathan, Nicholas White.
 For internal use by the Segrè Lab, Boston University
