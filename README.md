@@ -1,6 +1,6 @@
 # Metabolic Model Database Web App
 
-This is a Flask-based web application for uploading, querying, and visualizing gap-filled genome-scale metabolic models (GEMs), built as part of a database project for storing and managing metabolic reconstruction data in MariaDB. The app is to be used exclusively within SegreLab and findings are yet to be published.
+This is a Flask-based web application for uploading, querying, and visualizing gap-filled genome-scale metabolic models (GEMs), built as part of a database project for storing and managing metabolic reconstruction data in MariaDB. The app is to be used exclusively within SegreLab and findings are yet to be published. Hence did not add the SQL data to this repo. 
 
 
 ## 🔍 Features
